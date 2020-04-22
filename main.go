@@ -21,7 +21,6 @@ func main() {
 		fmt.Println("initializing window: ", err)
 		return
 	}
-
 	defer window.Destroy()
 
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_SOFTWARE)
@@ -29,7 +28,6 @@ func main() {
 		fmt.Println("creating renderer: ", err)
 		return
 	}
-
 	defer renderer.Destroy()
 
 	img, err := sdl.LoadBMP("sprites/hero.bmp")
@@ -37,11 +35,13 @@ func main() {
 		fmt.Println("loading bmp: ", err)
 		return
 	}
+	defer img.Free()
 
 	playerTex, err := renderer.CreateTextureFromSurface(img)
 	if err != nil {
 		fmt.Println("creating texture: ", err)
 	}
+	defer playerTex.Destroy()
 
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
