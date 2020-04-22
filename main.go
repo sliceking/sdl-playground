@@ -32,6 +32,17 @@ func main() {
 
 	defer renderer.Destroy()
 
+	img, err := sdl.LoadBMP("sprites/hero.bmp")
+	if err != nil {
+		fmt.Println("loading bmp: ", err)
+		return
+	}
+
+	playerTex, err := renderer.CreateTextureFromSurface(img)
+	if err != nil {
+		fmt.Println("creating texture: ", err)
+	}
+
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -41,6 +52,12 @@ func main() {
 		}
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
+
+		renderer.Copy(playerTex,
+			&sdl.Rect{X: 0, Y: 0, W: 16, H: 16},
+			&sdl.Rect{X: 0, Y: 0, W: 32, H: 32},
+		)
+
 		renderer.Present()
 	}
 }
