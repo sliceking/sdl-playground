@@ -14,7 +14,7 @@ func main() {
 
 	window, err := sdl.CreateWindow("gaming in go",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		600, 800, sdl.WINDOW_SHOWN,
+		600, 800, sdl.WINDOW_OPENGL,
 	)
 
 	if err != nil {
@@ -23,7 +23,7 @@ func main() {
 	}
 	defer window.Destroy()
 
-	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_SOFTWARE)
+	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		fmt.Println("creating renderer: ", err)
 		return
