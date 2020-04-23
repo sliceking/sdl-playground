@@ -6,6 +6,26 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+const (
+	screenWidth  = 600
+	screenHeight = 800
+)
+
+func textureFromBMP(renderer *sdl.Renderer, filename string) *sdl.Texture {
+	img, err := sdl.LoadBMP(filename)
+	if err != nil {
+		panic(fmt.Errorf("loading bmp %s: %v", filename, err))
+	}
+	defer img.Free()
+
+	tex, err := renderer.CreateTextureFromSurface(img)
+	if err != nil {
+		panic(fmt.Errorf("creating texture %s: %v", filename, err))
+	}
+
+	return tex
+}
+
 func main() {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		fmt.Println("initializing sdl: ", err)
@@ -14,7 +34,7 @@ func main() {
 
 	window, err := sdl.CreateWindow("gaming in go",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		600, 800, sdl.WINDOW_OPENGL,
+		screenWidth, screenHeight, sdl.WINDOW_OPENGL,
 	)
 
 	if err != nil {
@@ -35,6 +55,25 @@ func main() {
 		fmt.Println("loading player: ", err)
 	}
 
+	var enemies []enemy
+	// Create our rows of enemies
+	for i := 0; i < 5; i++ {
+		for j := 0; j < 3; j++ {
+			x := (float64(i) / 5) * screenWidth
+			y := float64(j)*enemySize*2 + (enemySize * 2)
+
+			enemy, err := newEnemy(renderer, x, y)
+			if err != nil {
+				fmt.Println("enemy creation: ", err)
+				return
+			}
+			enemies = append(enemies, enemy)
+		}
+	}
+
+	initBulletPool(renderer)
+
+	// Main loop
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
@@ -44,8 +83,17 @@ func main() {
 		}
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
-
+		player.update()
 		player.draw(renderer)
+
+		for _, enemy := range enemies {
+			enemy.draw(renderer)
+		}
+
+		for _, bullet := range bulletPool {
+			bullet.update()
+			bullet.draw(renderer)
+		}
 
 		renderer.Present()
 	}
