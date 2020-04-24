@@ -19,13 +19,21 @@ type player struct {
 	lastShot time.Time
 }
 
-func newPlayer(renderer *sdl.Renderer) (player, error) {
-	var p player
-	p.tex = textureFromBMP(renderer, "sprites/hero.bmp")
-	p.x = screenWidth / 2.0
-	p.y = screenHeight - playerSize*2.5
+func newPlayer(renderer *sdl.Renderer) *element {
+	player := element{}
+	player.position = vector{
+		x: screenWidth / 2.0,
+		y: screenHeight - playerSize*2.5,
+	}
+	player.active = true
 
-	return p, nil
+	sr := newSpriteRenderer(&player, renderer, "sprites/hero.bmp")
+	player.addComponent(sr)
+
+	mover := newKeyboardMover(&player, playerSpeed)
+	player.addComponent(mover)
+
+	return &player
 }
 
 func (p *player) draw(renderer *sdl.Renderer) {
