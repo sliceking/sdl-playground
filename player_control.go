@@ -1,6 +1,11 @@
 package main
 
-import "github.com/veandco/go-sdl2/sdl"
+import (
+	"math"
+	"time"
+
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 type keyboardMover struct {
 	container *element
@@ -40,4 +45,47 @@ func (mover *keyboardMover) onUpdate() error {
 
 func (mover *keyboardMover) onDraw(renderer *sdl.Renderer) error {
 	return nil
+}
+
+type keyboardShooter struct {
+	container *element
+	cooldown  time.Duration
+	lastShot  time.Time
+}
+
+func newKeyboardShooter(container *element, cooldown time.Duration) *keyboardShooter {
+	return &keyboardShooter{
+		container: container,
+		cooldown:  cooldown,
+	}
+}
+
+func (s *keyboardShooter) onUpdate() error {
+	keys := sdl.GetKeyboardState()
+
+	pos := s.container.position
+
+	if keys[sdl.SCANCODE_SPACE] == 1 {
+		if time.Since(s.lastShot) >= s.cooldown {
+			// TODO: maybe update these magic offset numbers
+			s.shoot(pos.x+7, pos.y-10)
+		}
+	}
+
+	return nil
+}
+
+func (s *keyboardShooter) onDraw(renderer *sdl.Renderer) error {
+	return nil
+}
+
+func (s *keyboardShooter) shoot(x, y float64) {
+	if b, ok := bulletFromPool(); ok {
+		b.active = true
+		b.x = x
+		b.y = y
+		b.angle = 270 * (math.Pi / 180)
+
+		s.lastShot = time.Now()
+	}
 }

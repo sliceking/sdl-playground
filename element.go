@@ -43,3 +43,25 @@ func (e *element) getComponent(withType component) component {
 
 	panic(fmt.Sprintf("couldnt find component getcomponent: %+v", reflect.TypeOf(withType)))
 }
+
+func (e *element) draw(renderer *sdl.Renderer) error {
+	for _, comp := range e.components {
+		err := comp.onDraw(renderer)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (e *element) update() error {
+	for _, comp := range e.components {
+		err := comp.onUpdate()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
