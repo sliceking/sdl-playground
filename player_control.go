@@ -82,9 +82,9 @@ func (s *keyboardShooter) onDraw(renderer *sdl.Renderer) error {
 func (s *keyboardShooter) shoot(x, y float64) {
 	if b, ok := bulletFromPool(); ok {
 		b.active = true
-		b.x = x
-		b.y = y
-		b.angle = 270 * (math.Pi / 180)
+		b.position.x = x
+		b.position.y = y
+		b.rotation = 270 * (math.Pi / 180)
 
 		s.lastShot = time.Now()
 	}

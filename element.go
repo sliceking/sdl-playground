@@ -65,3 +65,5 @@ func (e *element) update() error {
 
 	return nil
 }
+
+var elements []*element
