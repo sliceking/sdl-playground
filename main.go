@@ -79,6 +79,11 @@ func main() {
 			}
 		}
 
+		if err := checkCollisions(); err != nil {
+			fmt.Println("checking collisions:", err)
+			return
+		}
+
 		renderer.Present()
 	}
 }
